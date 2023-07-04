@@ -106,8 +106,32 @@ const updateTrain = async (req, res) => {
     }
 }
 
+const deleteTrain = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id) res.status(400).json({ msg: 'Invalid ID'});
+        readFile('public/data/trains.json', (err, data) => {
+            if (err) throw err;
+            const result = JSON.parse(data);
+            const updated = result.filter(item => item.id !== id);
+        writeFile('public/data/trains.json', JSON.stringify(updated, null, 4), (err) => {
+            if (err) throw err;
+            res.status(200).json({
+                msg: 'File has been removed'
+            })
+          })
+        }); 
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({
+            msg: 'Service is not available at this time. Try again'
+        })
+    }
+}
+
 module.exports = {
     getAlltrains,
     addNewTrain,
-    updateTrain
+    updateTrain,
+    deleteTrain
 }
